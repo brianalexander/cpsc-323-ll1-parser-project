@@ -1,55 +1,6 @@
-from enum import auto, Enum
-
-
-class Terminals(Enum):
-    BEGIN = auto()
-    IF = auto()
-    THEN = auto()
-    ELSE = auto()
-    ENDIF = auto()
-    WHILE = auto()
-    DO = auto()
-    WHILEEND = auto()
-    END = auto()
-    GT = auto()
-    LT = auto()
-    GTE = auto()
-    LTE = auto()
-    EQUALEQUALS = auto()
-    NOTEQUAL = auto()
-    INT = auto()
-    FLOAT = auto()
-    BOOL = auto()
-    SEMICOLON = auto()
-    COMMA = auto()
-    ID = auto()
-    NUM = auto()
-    LEFT_PAREN = auto()
-    RIGHT_PAREN = auto()
-    EOF = auto()
-    ADDITION = auto()
-    SUBTRACTION = auto()
-    MULTIPLICATION = auto()
-    DIVISION = auto()
-    ASSIGNEQUALS = auto()
-    EPSILON = auto()
-
-
-class NonTerminals(Enum):
-    STATEMENT = auto()
-    MORESTATEMENTS = auto()
-    CONDITIONAL = auto()
-    CONDITIONAL_PRIME = auto()
-    DECLARATIVE = auto()
-    TYPES = auto()
-    MOREIDS = auto()
-    ASSIGNMENT = auto()
-    EXPRESSION = auto()
-    EXPRESSION_PRIME = auto()
-    TERM = auto()
-    TERM_PRIME = auto()
-    FACTOR = auto()
-    RELATIONAL_OPERATOR = auto()
+import sys
+from Constants import NonTerminals, Terminals
+from lexer import lexer, token_to_terminal
 
 
 # parse table
@@ -578,10 +529,10 @@ def syntactic_analysis(tokens):
             # print('stack_item', stack_item, 'token', token)
 
             rule = table[stack_item][token]
-            # print('rule', rule)
+            print('rule', rule)
             for r in reversed(RULES[rule]):
                 stack.append(r)
-        # print('stack', stack)
+        print('stack', stack)
 
 
 assignment_production = [
@@ -632,6 +583,12 @@ while_production = [Terminals.WHILE, Terminals.ID, Terminals.LTE, Terminals.NUM,
                     Terminals.WHILEEND
                     ]
 
+while_parens_production = [Terminals.WHILE, Terminals.LEFT_PAREN,
+                           Terminals.ID, Terminals.LTE, Terminals.NUM, Terminals.RIGHT_PAREN,
+                           Terminals.DO, Terminals.ID, Terminals.ASSIGNEQUALS, Terminals.NUM,
+                           Terminals.SEMICOLON, Terminals.WHILEEND
+                           ]
+
 
 def test_suite():
     syntactic_analysis(assignment_production)
@@ -646,4 +603,27 @@ def test_suite():
     syntactic_analysis(while_production)
 
 
-test_suite()
+if __name__ == "__main__":
+    syntactic_analysis(while_parens_production)
+    # if (len(sys.argv) < 2):
+    #     print("Please specify a file path to lex as the first argument.")
+    #     sys.exit()
+
+    # # To lex a file, please pass the path as the first argument
+    # # Example usage: python3 lexer.py [path]
+    # path = sys.argv[1]
+
+    # tokens, illegal_tokens = lexer(path)
+    # print(tokens)
+    # terminal_string = token_to_terminal(tokens)
+    # print(terminal_string)
+    # syntactic_analysis(terminal_string)
+
+    # print("TOKENS\t\t\tLexemes")
+    # for token in tokens:
+    #     print("{0:10}\t\t{1}".format(token[0], token[1]))
+    # if(len(illegal_tokens) > 0):
+    #     print("\nILLEGAL TOKENS")
+    #     print("Line\t\t\tIllegal Token")
+    #     for token in illegal_tokens:
+    #         print("{0}\t\t\t{1}".format(token[0], token[1]))

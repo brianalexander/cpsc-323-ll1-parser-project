@@ -1,0 +1,15 @@
+while (x > 5) do
+begin
+    if 6 < d then
+    begin
+        int g;
+    end
+    else
+    begin 
+        int h;
+    end
+    endif
+    a = z + r;
+end
+whileend
+
