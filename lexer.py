@@ -208,7 +208,7 @@ def lexer(path):
                     # If we're current in the keyword state, make sure it is in the keyword list,
                     # Otherwise, it's an identifier.
                     if(current_state == ST_KEYWORD and token not in KEYWORDS):
-                        tokens.append((get_token_string[ST_IDENTIFIER], token))
+                        tokens.append((get_token_string[ST_IDENTIFIER], token, line_number))
 
                     # If we are exiting an error state, append the illegal token to our
                     # illegal token dictionary with the line number where it occurred
@@ -217,7 +217,7 @@ def lexer(path):
 
                     # All other cases append the token that we've built.
                     else:
-                        tokens.append((get_token_string[current_state], token))
+                        tokens.append((get_token_string[current_state], token, line_number))
 
                     # start a new token with the new char
                     token = char
@@ -260,67 +260,69 @@ def token_to_terminal(tokens):
     terminal_string = []
     # tokens[0] -> token
     # tokens[1] -> lexeme
+    # tokens[2] -> line number
     for i in range(len(tokens)):
         current_token = tokens[i][0]
         current_lexeme = str.lower(tokens[i][1])
+        line_number = tokens[i][2]
         if(current_token == "KEYWORD"):
             if(current_lexeme == 'begin'):
-                terminal_string.append(Terminals.BEGIN)
+                terminal_string.append((current_token, current_lexeme, Terminals.BEGIN, line_number))
             elif(current_lexeme == 'end'):
-                terminal_string.append(Terminals.END)
+                terminal_string.append((current_token, current_lexeme, Terminals.END, line_number))
             elif(current_lexeme == 'while'):
-                terminal_string.append(Terminals.WHILE)
+                terminal_string.append((current_token, current_lexeme, Terminals.WHILE, line_number))
             elif(current_lexeme == 'whileend'):
-                terminal_string.append(Terminals.WHILEEND)
+                terminal_string.append((current_token, current_lexeme, Terminals.WHILEEND, line_number))
             elif(current_lexeme == 'do'):
-                terminal_string.append(Terminals.DO)
+                terminal_string.append((current_token, current_lexeme, Terminals.DO, line_number))
             elif(current_lexeme == 'if'):
-                terminal_string.append(Terminals.IF)
+                terminal_string.append((current_token, current_lexeme, Terminals.IF, line_number))
             elif(current_lexeme == 'then'):
-                terminal_string.append(Terminals.THEN)
+                terminal_string.append((current_token, current_lexeme, Terminals.THEN, line_number))
             elif(current_lexeme == 'else'):
-                terminal_string.append(Terminals.ELSE)
+                terminal_string.append((current_token, current_lexeme, Terminals.ELSE, line_number))
             elif(current_lexeme == 'endif'):
-                terminal_string.append(Terminals.ENDIF)
+                terminal_string.append((current_token, current_lexeme, Terminals.ENDIF, line_number))
             elif(current_lexeme == 'int'):
-                terminal_string.append(Terminals.INT)
+                terminal_string.append((current_token, current_lexeme, Terminals.INT, line_number))
             elif(current_lexeme == 'float'):
-                terminal_string.append(Terminals.FLOAT)
+                terminal_string.append((current_token, current_lexeme, Terminals.FLOAT, line_number))
             elif(current_lexeme == 'bool'):
-                terminal_string.append(Terminals.BOOL)
+                terminal_string.append((current_token, current_lexeme, Terminals.BOOL, line_number))
         elif(current_token in ['INT', 'REAL']):
-            terminal_string.append(Terminals.NUM)
+            terminal_string.append((current_token, current_lexeme, Terminals.NUM, line_number))
         elif (current_token == 'IDENTIFIER'):
-            terminal_string.append(Terminals.ID)
+            terminal_string.append((current_token, current_lexeme, Terminals.ID, line_number))
         elif(current_token == 'SEPARATOR'):
             if (current_lexeme == "("):
-                terminal_string.append(Terminals.LEFT_PAREN)
+                terminal_string.append((current_token, current_lexeme, Terminals.LEFT_PAREN, line_number))
             elif (current_lexeme == ")"):
-                terminal_string.append(Terminals.RIGHT_PAREN)
+                terminal_string.append((current_token, current_lexeme, Terminals.RIGHT_PAREN, line_number))
             elif(current_lexeme == ','):
-                terminal_string.append(Terminals.COMMA)
+                terminal_string.append((current_token, current_lexeme, Terminals.COMMA, line_number))
             elif(current_lexeme == ';'):
-                terminal_string.append(Terminals.SEMICOLON)
+                terminal_string.append((current_token, current_lexeme, Terminals.SEMICOLON, line_number))
         elif(current_token == 'OPERATOR'):
             if (current_lexeme == "+"):
-                terminal_string.append(Terminals.ADDITION)
+                terminal_string.append((current_token, current_lexeme, Terminals.ADDITION, line_number))
             elif (current_lexeme == "-"):
-                terminal_string.append(Terminals.SUBTRACTION)
+                terminal_string.append((current_token, current_lexeme, Terminals.SUBTRACTION, line_number))
             elif(current_lexeme == '*'):
-                terminal_string.append(Terminals.MULTIPLICATION)
+                terminal_string.append((current_token, current_lexeme, Terminals.MULTIPLICATION, line_number))
             elif(current_lexeme == '>'):
-                terminal_string.append(Terminals.GT)
+                terminal_string.append((current_token, current_lexeme, Terminals.GT, line_number))
             elif(current_lexeme == '>='):
-                terminal_string.append(Terminals.GTE)
+                terminal_string.append((current_token, current_lexeme, Terminals.GTE, line_number))
             elif(current_lexeme == '<'):
-                terminal_string.append(Terminals.LT)
+                terminal_string.append((current_token, current_lexeme, Terminals.LT, line_number))
             elif(current_lexeme == '<='):
-                terminal_string.append(Terminals.LTE)
+                terminal_string.append((current_token, current_lexeme, Terminals.LTE, line_number))
             elif(current_lexeme == '=='):
-                terminal_string.append(Terminals.EQUALEQUALS)
+                terminal_string.append((current_token, current_lexeme, Terminals.EQUALEQUALS, line_number))
             elif(current_lexeme == '='):
-                terminal_string.append(Terminals.ASSIGNEQUALS)
+                terminal_string.append((current_token, current_lexeme, Terminals.ASSIGNEQUALS, line_number))
             elif(current_lexeme == '<>'):
-                terminal_string.append(Terminals.NOTEQUAL)
+                terminal_string.append((current_token, current_lexeme, Terminals.NOTEQUAL, line_number))
 
     return terminal_string

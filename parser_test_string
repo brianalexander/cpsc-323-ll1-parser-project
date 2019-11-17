@@ -1,6 +1,6 @@
-while (x > 5) do
+while x > 5 do
 begin
-    if 6 < d then
+    if (6 < d) then
     begin
         int g;
     end

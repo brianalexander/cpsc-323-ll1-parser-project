@@ -1,17 +1,17 @@
 import sys
-from Constants import NonTerminals, Terminals
+from Constants import NonTerminals, Terminals, ProductionFactory
 from lexer import lexer, token_to_terminal
 
 
 # parse table
 table = {
     NonTerminals.STATEMENT: {
-        Terminals.BEGIN: 'S->begin',
-        Terminals.IF: 'S->if',
+        Terminals.BEGIN: 5,
+        Terminals.IF: 3,
         Terminals.THEN: None,
-        Terminals.ELSE: 'S->Epsilon',
-        Terminals.ENDIF: 'S->Epsilon',
-        Terminals.WHILE: 'S->while',
+        Terminals.ELSE: 0,
+        Terminals.ENDIF: 0,
+        Terminals.WHILE: 4,
         Terminals.DO: None,
         Terminals.WHILEEND: None,
         Terminals.END: None,
@@ -21,12 +21,12 @@ table = {
         Terminals.LTE: None,
         Terminals.EQUALEQUALS: None,
         Terminals.NOTEQUAL: None,
-        Terminals.INT: 'S->D',
-        Terminals.FLOAT: 'S->D',
-        Terminals.BOOL: 'S->D',
+        Terminals.INT: 2,
+        Terminals.FLOAT: 2,
+        Terminals.BOOL: 2,
         Terminals.SEMICOLON: None,
         Terminals.COMMA: None,
-        Terminals.ID: 'S->A',
+        Terminals.ID: 1,
         Terminals.NUM: None,
         Terminals.LEFT_PAREN: None,
         Terminals.RIGHT_PAREN: None,
@@ -38,31 +38,31 @@ table = {
         Terminals.ASSIGNEQUALS: None,
     },
     NonTerminals.MORESTATEMENTS: {
-        Terminals.BEGIN: "Ms->S_Ms",
-        Terminals.IF: "Ms->S_Ms",
+        Terminals.BEGIN: 6,
+        Terminals.IF: 6,
         Terminals.THEN: None,
         Terminals.ELSE: None,
         Terminals.ENDIF: None,
-        Terminals.WHILE: "Ms->S_Ms",
+        Terminals.WHILE: 6,
         Terminals.DO: None,
         Terminals.WHILEEND: None,
-        Terminals.END: "Ms->Epsilon",
+        Terminals.END: 7,
         Terminals.GT: None,
         Terminals.LT: None,
         Terminals.GTE: None,
         Terminals.LTE: None,
         Terminals.EQUALEQUALS: None,
         Terminals.NOTEQUAL: None,
-        Terminals.INT: "Ms->S_Ms",
-        Terminals.FLOAT: "Ms->S_Ms",
-        Terminals.BOOL: "Ms->S_Ms",
+        Terminals.INT: 6,
+        Terminals.FLOAT: 6,
+        Terminals.BOOL: 6,
         Terminals.SEMICOLON: None,
         Terminals.COMMA: None,
-        Terminals.ID: "Ms->S_Ms",
+        Terminals.ID: 6,
         Terminals.NUM: None,
         Terminals.LEFT_PAREN: None,
         Terminals.RIGHT_PAREN: None,
-        Terminals.EOF: "Ms->Epsilon",
+        Terminals.EOF: 7,
         Terminals.ADDITION: None,
         Terminals.SUBTRACTION: None,
         Terminals.MULTIPLICATION: None,
@@ -90,9 +90,9 @@ table = {
         Terminals.BOOL: None,
         Terminals.SEMICOLON: None,
         Terminals.COMMA: None,
-        Terminals.ID: 'C->E_Cp',
-        Terminals.NUM: 'C->E_Cp',
-        Terminals.LEFT_PAREN: 'C->E_Cp',
+        Terminals.ID: 8,
+        Terminals.NUM: 8,
+        Terminals.LEFT_PAREN: 8,
         Terminals.RIGHT_PAREN: None,
         Terminals.EOF: None,
         Terminals.ADDITION: None,
@@ -104,23 +104,23 @@ table = {
     NonTerminals.CONDITIONAL_PRIME: {
         Terminals.BEGIN: None,
         Terminals.IF: None,
-        Terminals.THEN: 'Cp->Epsilon',
+        Terminals.THEN: 10,
         Terminals.ELSE: None,
         Terminals.ENDIF: None,
         Terminals.WHILE: None,
-        Terminals.DO: 'Cp->Epsilon',
+        Terminals.DO: 10,
         Terminals.WHILEEND: None,
         Terminals.END: None,
-        Terminals.GT: 'Cp->R_E',
-        Terminals.LT: 'Cp->R_E',
-        Terminals.GTE: 'Cp->R_E',
-        Terminals.LTE: 'Cp->R_E',
-        Terminals.EQUALEQUALS: 'Cp->R_E',
-        Terminals.NOTEQUAL: 'Cp->R_E',
+        Terminals.GT: 9,
+        Terminals.LT: 9,
+        Terminals.GTE: 9,
+        Terminals.LTE: 9,
+        Terminals.EQUALEQUALS: 9,
+        Terminals.NOTEQUAL: 9,
         Terminals.INT: None,
         Terminals.FLOAT: None,
         Terminals.BOOL: None,
-        Terminals.SEMICOLON: 'Cp->Epsilon',
+        Terminals.SEMICOLON: 10,
         Terminals.COMMA: None,
         Terminals.ID: None,
         Terminals.NUM: None,
@@ -149,9 +149,9 @@ table = {
         Terminals.LTE: None,
         Terminals.EQUALEQUALS: None,
         Terminals.NOTEQUAL: None,
-        Terminals.INT: 'D->Ty_id_Mi_;',
-        Terminals.FLOAT: 'D->Ty_id_Mi_;',
-        Terminals.BOOL: 'D->Ty_id_Mi_;',
+        Terminals.INT: 11,
+        Terminals.FLOAT: 11,
+        Terminals.BOOL: 11,
         Terminals.SEMICOLON: None,
         Terminals.COMMA: None,
         Terminals.ID: None,
@@ -181,9 +181,9 @@ table = {
         Terminals.LTE: None,
         Terminals.EQUALEQUALS: None,
         Terminals.NOTEQUAL: None,
-        Terminals.INT: 'Ty->int',
-        Terminals.FLOAT: 'Ty->float',
-        Terminals.BOOL: 'Ty->bool',
+        Terminals.INT: 12,
+        Terminals.FLOAT: 13,
+        Terminals.BOOL: 14,
         Terminals.SEMICOLON: None,
         Terminals.COMMA: None,
         Terminals.ID: None,
@@ -216,8 +216,8 @@ table = {
         Terminals.INT: None,
         Terminals.FLOAT: None,
         Terminals.BOOL: None,
-        Terminals.SEMICOLON: 'Mi->Epsilon',
-        Terminals.COMMA: 'Mi->,_id_Mi',
+        Terminals.SEMICOLON: 16,
+        Terminals.COMMA: 15,
         Terminals.ID: None,
         Terminals.NUM: None,
         Terminals.LEFT_PAREN: None,
@@ -250,7 +250,7 @@ table = {
         Terminals.BOOL: None,
         Terminals.SEMICOLON: None,
         Terminals.COMMA: None,
-        Terminals.ID: 'A->id_=_C_;',
+        Terminals.ID: 17,
         Terminals.NUM: None,
         Terminals.LEFT_PAREN: None,
         Terminals.RIGHT_PAREN: None,
@@ -282,9 +282,9 @@ table = {
         Terminals.BOOL: None,
         Terminals.SEMICOLON: None,
         Terminals.COMMA: None,
-        Terminals.ID: 'E->T_Ep',
-        Terminals.NUM: 'E->T_Ep',
-        Terminals.LEFT_PAREN: 'E->T_Ep',
+        Terminals.ID: 24,
+        Terminals.NUM: 24,
+        Terminals.LEFT_PAREN: 24,
         Terminals.RIGHT_PAREN: None,
         Terminals.EOF: None,
         Terminals.ADDITION: None,
@@ -296,31 +296,31 @@ table = {
     NonTerminals.EXPRESSION_PRIME: {
         Terminals.BEGIN: None,
         Terminals.IF: None,
-        Terminals.THEN: 'Ep->Epsilon',
+        Terminals.THEN: 27,
         Terminals.ELSE: None,
         Terminals.ENDIF: None,
         Terminals.WHILE: None,
-        Terminals.DO: 'Ep->Epsilon',
+        Terminals.DO: 27,
         Terminals.WHILEEND: None,
         Terminals.END: None,
-        Terminals.GT: 'Ep->Epsilon',
-        Terminals.LT: 'Ep->Epsilon',
-        Terminals.GTE: 'Ep->Epsilon',
-        Terminals.LTE: 'Ep->Epsilon',
-        Terminals.EQUALEQUALS: 'Ep->Epsilon',
-        Terminals.NOTEQUAL: 'Ep->Epsilon',
+        Terminals.GT: 27,
+        Terminals.LT: 27,
+        Terminals.GTE: 27,
+        Terminals.LTE: 27,
+        Terminals.EQUALEQUALS: 27,
+        Terminals.NOTEQUAL: 27,
         Terminals.INT: None,
         Terminals.FLOAT: None,
         Terminals.BOOL: None,
-        Terminals.SEMICOLON: 'Ep->Epsilon',
+        Terminals.SEMICOLON: 27,
         Terminals.COMMA: None,
         Terminals.ID: None,
         Terminals.NUM: None,
         Terminals.LEFT_PAREN: None,
-        Terminals.RIGHT_PAREN: 'Ep->Epsilon',
+        Terminals.RIGHT_PAREN: 27,
         Terminals.EOF: None,
-        Terminals.ADDITION: 'Ep->+_T_Ep',
-        Terminals.SUBTRACTION: 'Ep->-_T_Ep',
+        Terminals.ADDITION: 25,
+        Terminals.SUBTRACTION: 26,
         Terminals.MULTIPLICATION: None,
         Terminals.DIVISION: None,
         Terminals.ASSIGNEQUALS: None,
@@ -346,9 +346,9 @@ table = {
         Terminals.BOOL: None,
         Terminals.SEMICOLON: None,
         Terminals.COMMA: None,
-        Terminals.ID: 'T->F_Tp',
-        Terminals.NUM: 'T->F_Tp',
-        Terminals.LEFT_PAREN: 'T->F_Tp',
+        Terminals.ID: 28,
+        Terminals.NUM: 28,
+        Terminals.LEFT_PAREN: 28,
         Terminals.RIGHT_PAREN: None,
         Terminals.EOF: None,
         Terminals.ADDITION: None,
@@ -360,33 +360,33 @@ table = {
     NonTerminals.TERM_PRIME: {
         Terminals.BEGIN: None,
         Terminals.IF: None,
-        Terminals.THEN: 'Tp->Epsilon',
+        Terminals.THEN: 31,
         Terminals.ELSE: None,
         Terminals.ENDIF: None,
         Terminals.WHILE: None,
-        Terminals.DO: 'Tp->Epsilon',
+        Terminals.DO: 31,
         Terminals.WHILEEND: None,
         Terminals.END: None,
-        Terminals.GT: 'Tp->Epsilon',
-        Terminals.LT: 'Tp->Epsilon',
-        Terminals.GTE: 'Tp->Epsilon',
-        Terminals.LTE: 'Tp->Epsilon',
-        Terminals.EQUALEQUALS: 'Tp->Epsilon',
-        Terminals.NOTEQUAL: 'Tp->Epsilon',
+        Terminals.GT: 31,
+        Terminals.LT: 31,
+        Terminals.GTE: 31,
+        Terminals.LTE: 31,
+        Terminals.EQUALEQUALS: 31,
+        Terminals.NOTEQUAL: 31,
         Terminals.INT: None,
         Terminals.FLOAT: None,
         Terminals.BOOL: None,
-        Terminals.SEMICOLON: 'Tp->Epsilon',
+        Terminals.SEMICOLON: 31,
         Terminals.COMMA: None,
-        Terminals.ID: 'Tp->Epsilon',
-        Terminals.NUM: 'Tp->Epsilon',
-        Terminals.LEFT_PAREN: 'Tp->Epsilon',
+        Terminals.ID: 31,
+        Terminals.NUM: 31,
+        Terminals.LEFT_PAREN: 31,
         Terminals.RIGHT_PAREN: None,
         Terminals.EOF: None,
-        Terminals.ADDITION: 'Tp->Epsilon',
-        Terminals.SUBTRACTION: 'Tp->Epsilon',
-        Terminals.MULTIPLICATION: 'Tp->*_F_Tp',
-        Terminals.DIVISION: 'Tp->/_F_Tp',
+        Terminals.ADDITION: 31,
+        Terminals.SUBTRACTION: 31,
+        Terminals.MULTIPLICATION: 29,
+        Terminals.DIVISION: 30,
         Terminals.ASSIGNEQUALS: None,
     },
     NonTerminals.FACTOR: {
@@ -410,9 +410,9 @@ table = {
         Terminals.BOOL: None,
         Terminals.SEMICOLON: None,
         Terminals.COMMA: None,
-        Terminals.ID: 'F->id',
-        Terminals.NUM: 'F->num',
-        Terminals.LEFT_PAREN: 'F->(_E_)',
+        Terminals.ID: 33,
+        Terminals.NUM: 34,
+        Terminals.LEFT_PAREN: 32,
         Terminals.RIGHT_PAREN: None,
         Terminals.EOF: None,
         Terminals.ADDITION: None,
@@ -431,12 +431,12 @@ table = {
         Terminals.DO: None,
         Terminals.WHILEEND: None,
         Terminals.END: None,
-        Terminals.GT: 'R->>',
-        Terminals.LT: 'R-><',
-        Terminals.GTE: 'R->>=',
-        Terminals.LTE: 'R-><=',
-        Terminals.EQUALEQUALS: 'R->==',
-        Terminals.NOTEQUAL: 'R-><>',
+        Terminals.GT: 18,
+        Terminals.LT: 19,
+        Terminals.GTE: 20,
+        Terminals.LTE: 21,
+        Terminals.EQUALEQUALS: 22,
+        Terminals.NOTEQUAL: 23,
         Terminals.INT: None,
         Terminals.FLOAT: None,
         Terminals.BOOL: None,
@@ -454,85 +454,139 @@ table = {
         Terminals.ASSIGNEQUALS: None,
     },
 }
-
-
+p = ProductionFactory()
+index_to_rules = [
+    p.Statement.To.Epsilon.Finish,
+    p.Statement.To.Assignment.Finish,
+    p.Statement.To.Declarative.Finish,
+    p.Statement.To.If.Conditional.Then.Statement.Else.Statement.Endif.Finish,
+    p.Statement.To.While.Conditional.Do.Statement.Whileend.Finish,
+    p.Statement.To.Begin.MoreStatements.End.Finish,
+    p.MoreStatements.To.Statement.MoreStatements.Finish,
+    p.MoreStatements.To.Epsilon.Finish,
+    p.Conditional.To.Expression.ConditionalPrime.Finish,
+    p.ConditionalPrime.To.Relop.Expression.Finish,
+    p.ConditionalPrime.To.Epsilon.Finish,
+    p.Declarative.To.Type.Id.MoreIds.Semicolon.Finish,
+    p.Type.To.Int.Finish,
+    p.Type.To.Float.Finish,
+    p.Type.To.Bool.Finish,
+    p.MoreIds.To.Comma.Id.MoreIds.Finish,
+    p.MoreIds.To.Epsilon.Finish,
+    p.Assignment.To.Id.Assignequals.Conditional.Semicolon.Finish,
+    p.Relop.To.GreaterThan.Finish,
+    p.Relop.To.LessThan.Finish,
+    p.Relop.To.GreaterThanEqual.Finish,
+    p.Relop.To.LessThanEqual.Finish,
+    p.Relop.To.Equalequal.Finish,
+    p.Relop.To.Notequal.Finish,
+    p.Expression.To.Term.ExpressionPrime.Finish,
+    p.ExpressionPrime.To.Addition.Term.ExpressionPrime.Finish,
+    p.ExpressionPrime.To.Subtraction.Term.ExpressionPrime.Finish,
+    p.ExpressionPrime.To.Epsilon.Finish,
+    p.Term.To.Factor.TermPrime.Finish,
+    p.TermPrime.To.Multiplication.Factor.TermPrime.Finish,
+    p.TermPrime.To.Division.Factor.TermPrime.Finish,
+    p.TermPrime.To.Epsilon.Finish,
+    p.Factor.To.LeftParenthesis.Expression.RightParenthesis.Finish,
+    p.Factor.To.Id.Finish,
+    p.Factor.To.Num.Finish
+]
 RULES = {
-    'S->Epsilon': [],
-    'S->A': [NonTerminals.ASSIGNMENT],
-    'S->D': [NonTerminals.DECLARATIVE],
-    'S->if': [Terminals.IF, NonTerminals.CONDITIONAL,
-              Terminals.THEN, NonTerminals.STATEMENT,
-              Terminals.ELSE, NonTerminals.STATEMENT,
-              Terminals.ENDIF],
-    'S->while': [Terminals.WHILE, NonTerminals.CONDITIONAL,
-                 Terminals.DO, NonTerminals.STATEMENT,
-                 Terminals.WHILEEND],
-    'S->begin': [Terminals.BEGIN, NonTerminals.MORESTATEMENTS, Terminals.END],
-    'Ms->S_Ms': [NonTerminals.STATEMENT, NonTerminals.MORESTATEMENTS],
-    'Ms->Epsilon': [],
-    'C->E_Cp': [NonTerminals.EXPRESSION, NonTerminals.CONDITIONAL_PRIME],
-    'Cp->R_E': [NonTerminals.RELATIONAL_OPERATOR, NonTerminals.EXPRESSION],
-    'Cp->Epsilon': [],
-    'D->Ty_id_Mi_;': [NonTerminals.TYPES, Terminals.ID,
-                      NonTerminals.MOREIDS, Terminals.SEMICOLON],
-    'Ty->int': [Terminals.INT],
-    'Ty->float': [Terminals.FLOAT],
-    'Ty->bool': [Terminals.BOOL],
-    'Mi->,id_Mi': [Terminals.COMMA, Terminals.ID, NonTerminals.MOREIDS],
-    'Mi->Epsilon': [],
-    'A->id_=_C_;': [Terminals.ID, Terminals.ASSIGNEQUALS,
-                    NonTerminals.CONDITIONAL, Terminals.SEMICOLON],
-    'R->>': [Terminals.GT],
-    'R-><': [Terminals.LT],
-    'R->>=': [Terminals.GTE],
-    'R-><=': [Terminals.LTE],
-    'R->==': [Terminals.EQUALEQUALS],
-    'R-><>': [Terminals.NOTEQUAL],
-    'E->T_Ep': [NonTerminals.TERM, NonTerminals.EXPRESSION_PRIME],
-    'Ep->+_T_Ep': [Terminals.ADDITION, NonTerminals.TERM,
-                   NonTerminals.EXPRESSION_PRIME],
-    'Ep->-_T_Ep': [Terminals.SUBTRACTION, NonTerminals.TERM,
-                   NonTerminals.EXPRESSION_PRIME],
-    'Ep->Epsilon': [],
-    'T->F_Tp': [NonTerminals.FACTOR, NonTerminals.TERM_PRIME],
-    'Tp->*_F_Tp': [Terminals.MULTIPLICATION, NonTerminals.FACTOR,
-                   NonTerminals.TERM_PRIME],
-    'Tp->/_F_Tp': [Terminals.DIVISION, NonTerminals.FACTOR,
-                   NonTerminals.TERM_PRIME],
-    'Tp->Epsilon': [],
-    'F->(_E_)': [Terminals.LEFT_PAREN, NonTerminals.EXPRESSION,
-                 Terminals.RIGHT_PAREN],
-    'F->id': [Terminals.ID],
-    'F->num': [Terminals.NUM]
+    0: [],
+    1: [NonTerminals.ASSIGNMENT],
+    2: [NonTerminals.DECLARATIVE],
+    3: [Terminals.IF, NonTerminals.CONDITIONAL,
+        Terminals.THEN, NonTerminals.STATEMENT,
+        Terminals.ELSE, NonTerminals.STATEMENT,
+        Terminals.ENDIF],
+    4: [Terminals.WHILE, NonTerminals.CONDITIONAL,
+        Terminals.DO, NonTerminals.STATEMENT,
+        Terminals.WHILEEND],
+    5: [Terminals.BEGIN, NonTerminals.MORESTATEMENTS, Terminals.END],
+    6: [NonTerminals.STATEMENT, NonTerminals.MORESTATEMENTS],
+    7: [],
+    8: [NonTerminals.EXPRESSION, NonTerminals.CONDITIONAL_PRIME],
+    9: [NonTerminals.RELATIONAL_OPERATOR, NonTerminals.EXPRESSION],
+    10: [],
+    11: [NonTerminals.TYPES, Terminals.ID,
+         NonTerminals.MOREIDS, Terminals.SEMICOLON],
+    12: [Terminals.INT],
+    13: [Terminals.FLOAT],
+    14: [Terminals.BOOL],
+    15: [Terminals.COMMA, Terminals.ID, NonTerminals.MOREIDS],
+    16: [],
+    17: [Terminals.ID, Terminals.ASSIGNEQUALS,
+         NonTerminals.CONDITIONAL, Terminals.SEMICOLON],
+    18: [Terminals.GT],
+    19: [Terminals.LT],
+    20: [Terminals.GTE],
+    21: [Terminals.LTE],
+    22: [Terminals.EQUALEQUALS],
+    23: [Terminals.NOTEQUAL],
+    24: [NonTerminals.TERM, NonTerminals.EXPRESSION_PRIME],
+    25: [Terminals.ADDITION, NonTerminals.TERM,
+         NonTerminals.EXPRESSION_PRIME],
+    26: [Terminals.SUBTRACTION, NonTerminals.TERM,
+         NonTerminals.EXPRESSION_PRIME],
+    27: [],
+    28: [NonTerminals.FACTOR, NonTerminals.TERM_PRIME],
+    29: [Terminals.MULTIPLICATION, NonTerminals.FACTOR,
+         NonTerminals.TERM_PRIME],
+    30: [Terminals.DIVISION, NonTerminals.FACTOR,
+         NonTerminals.TERM_PRIME],
+    31: [],
+    32: [Terminals.LEFT_PAREN, NonTerminals.EXPRESSION,
+         Terminals.RIGHT_PAREN],
+    33: [Terminals.ID],
+    34: [Terminals.NUM]
 }
 
 
 def syntactic_analysis(tokens):
+    # tokens[0] token_type
+    # tokens[1] lexeme
+    # tokens[2] terminal type
+    # tokens[3] line number
+    old_position = -1
+
+    rules_array = []
     stack = [Terminals.EOF, NonTerminals.MORESTATEMENTS]
 
-    tokens.append(Terminals.EOF)
+    tokens.append(('EOF', '$', Terminals.EOF))
 
     position = 0
     while len(stack) > 0:
         stack_item = stack.pop()
-        token = tokens[position]
+
+        token_type = tokens[position][0]
+        lexeme = tokens[position][1]
+        terminal_type = tokens[position][2]
+        line_number = tokens[position][3]
+
         if isinstance(stack_item, Terminals):
-            if stack_item == token:
+            if stack_item == terminal_type:
                 position += 1
                 # print('pop', stack_item)
-                if token == Terminals.EOF:
+                if terminal_type == Terminals.EOF:
                     print('input accepted')
             else:
-                print('bad term on input:', token)
+                print('Syntax Error:')
+                print('Expected', stack_item, ', got', terminal_type, "on line", line_number)
+                print('Lexeme:', lexeme)
+                print('Token:', token_type)
                 break
         elif isinstance(stack_item, NonTerminals):
-            # print('stack_item', stack_item, 'token', token)
+            if(old_position != position):
+                print('Token:', token_type, '\t', 'Lexeme:', lexeme)
+                old_position = position
 
-            rule = table[stack_item][token]
-            print('rule', rule)
+            rule = table[stack_item][terminal_type]
+            print('\t', index_to_rules[rule])
+
             for r in reversed(RULES[rule]):
                 stack.append(r)
-        print('stack', stack)
+        # print('stack', stack)
 
 
 assignment_production = [
@@ -604,20 +658,20 @@ def test_suite():
 
 
 if __name__ == "__main__":
-    syntactic_analysis(while_parens_production)
-    # if (len(sys.argv) < 2):
-    #     print("Please specify a file path to lex as the first argument.")
-    #     sys.exit()
+    if (len(sys.argv) < 2):
+        print("Please specify a file path to lex as the first argument.")
+        sys.exit()
 
-    # # To lex a file, please pass the path as the first argument
-    # # Example usage: python3 lexer.py [path]
-    # path = sys.argv[1]
+    # To lex a file, please pass the path as the first argument
+    # Example usage: python3 lexer.py [path]
+    path = sys.argv[1]
 
-    # tokens, illegal_tokens = lexer(path)
+    tokens, illegal_tokens = lexer(path)
     # print(tokens)
-    # terminal_string = token_to_terminal(tokens)
+    terminal_string = token_to_terminal(tokens)
+    # token_type, lexeme, terminal_type
     # print(terminal_string)
-    # syntactic_analysis(terminal_string)
+    syntactic_analysis(terminal_string)
 
     # print("TOKENS\t\t\tLexemes")
     # for token in tokens:
